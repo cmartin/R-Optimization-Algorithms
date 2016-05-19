@@ -30,5 +30,6 @@ ss_unimodal_quadratic <- function(params) {
 # plot(df$population ~ df$temperature )
 # new_x <- seq(from = min(df$temperature), to = max(df$temperature), length.out = 50)
 #  lines(
-#    f_unimodal_quadratic(c(-0.01047734,0.49632559,-2.37218016), x = new_x)
+#    #f_unimodal_quadratic(c(-0.01047734,0.49632559,-2.37218016), x = new_x)
+#    f_unimodal_quadratic(c(-0.02299975,  1.02457637, -6.80575146), x = new_x)
 #  )
