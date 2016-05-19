@@ -16,12 +16,12 @@ temp_for_progress <- function(progress, start_temp) { # Progress is 0 at first, 
 
 }
 
-simulated_annealing <- function(
+simulated_annealing_minimizer <- function(
   n_params = 1,
   f,
   max_iterations = 100000,
   start_temp = 3,
-  verbose = TRUE,
+  verbose = FALSE,
   tolerance = 1e-5,
   max_stall_iterations = 500 * n_params
 
@@ -74,7 +74,3 @@ simulated_annealing <- function(
   return(theta)
 
 }
-
-
-source("test_functions/MathewsFink.R")
-simulated_annealing(2,mf_f, max_iterations = 100000, verbose = FALSE)
