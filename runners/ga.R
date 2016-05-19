@@ -7,9 +7,7 @@ source("test_functions/MathewsFink.R")
   2,
   mf_f,
   tolerance = .01,
-  max_iterations = 500,
-  n_genomes = 200,
+  max_iterations = 50,
   w = 3,
-  mutation_rate = 0.1,
-  mutation_amplitude = 2
+  mutation_rate = 0.5
 ))

@@ -21,7 +21,7 @@ genetic_algorithm_minimizer <- function(
 
     se <- sd(y_values) / sqrt(n_genomes)
 
-    cat(mean(y_values),"\r\n")
+    cat(min(y_values),"\r\n")
 
     if (se < tolerance) {
       cat(paste0("Solution reached at iter ",k,"\r\n"))
