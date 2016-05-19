@@ -1,5 +1,7 @@
 # Nelder-Mead minimizer, as described in Nelder & Mead's 1965 paper
 
+source("utils/se.R")
+
 nelder_mead_minimizer <- function(
   n, # how many parameters is the problem
   f, # the function to minimize
@@ -60,7 +62,7 @@ nelder_mead_minimizer <- function(
     }
 
     # Checking for exit condition
-    se <- sd(apply(P,1,f)) / sqrt(n+1)
+    se <- std_err(apply(P,1,f))
     if (se < tolerance) {
       cat(paste0("Solution reached at iter ",i,"\r\n"))
       break
