@@ -25,3 +25,6 @@ g <- function(params) {
 source("test_functions/LinearModel.R")
 (sol <- nelder_mead_minimizer(2,lm_ss))
 (sol <- nelder_mead_minimizer(3,lm_logL))
+
+source("test_functions/Unimodal.R")
+(sol <- nelder_mead_minimizer(3,ss_unimodal_quadratic, max_iterations = 300))
