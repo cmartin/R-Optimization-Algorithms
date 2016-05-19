@@ -10,20 +10,16 @@ p <- function(delta_h, t) {
   exp(delta_h / t)
 }
 
-temp_for_progress <- function(progress, start_temp) { # Progress is 0 at first, 1 at the end
-
-  (((1-progress) * start_temp)^2)/start_temp + .00001 # temp must never be zero for probability calculations
-
-}
-
 simulated_annealing_minimizer <- function(
   n_params = 1,
   f,
   max_iterations = 100000,
-  start_temp = 3,
+  start_temp = 100,
   verbose = FALSE,
-  tolerance = 1e-5,
-  max_stall_iterations = 500 * n_params
+  tolerance = 1e-6,
+  max_stall_iterations = 500 * n_params,
+  temperature_curve = 0.95, # 1 = linear
+  step = 0.5
 
 ){
 
@@ -36,13 +32,14 @@ simulated_annealing_minimizer <- function(
   for (i in 1:max_iterations) {
     for (j in 1:n_params) {
       theta1 <- theta
-      theta1[j] <- theta1[j] + delta()
+      theta1[j] <- theta1[j] + runif(n = 1, min = -step, max = step)
 
       new_y <- -f(theta1) # turn algorithm into a minimizer
 
       delta_h <- new_y - current_y
 
-      temp <- temp_for_progress(i / max_iterations, start_temp)
+      #temp <- temp_for_progress(i / max_iterations, start_temp)
+      temp <- start_temp * temperature_curve^i
       if ( (delta_h > 0) || (runif(1) < p(delta_h, temp))) {
         theta <- theta1
         current_y <- new_y
