@@ -7,14 +7,14 @@ source("test_functions/MathewsFink.R")
 
 n_params = 2
 f = mf_f # function to minimize
-max_generations = 1000
+max_generations = 100*n_params
 population_size = 50
 tolerance = 1e-08 # standard error of predicted y before we stop,
-w = 1 # weighting factor to favor best individuals (1 = exactly proportional),
+w = 2 # weighting factor to favor best individuals (1 = exactly proportional),
 
 elite_count = 2 # how many "best" individuals do we keep?
 cross_over_fraction = 0.5 # what are the proportions of crossovers vs mutations
-
+stall_generations = 50
 # genetic_algorithm_minimizer <- function(
 #   n_params,
 #   f, # function to minimize
@@ -27,18 +27,37 @@ cross_over_fraction = 0.5 # what are the proportions of crossovers vs mutations
 
   population <- matrix(ncol = n_params, nrow = population_size, data = rnorm(n_params*population_size))
 
+  y_trace <- c()
+
   for (i in 1:max_generations) {
     y_values <- apply(population, 1, f)
-    fitness <- 1/y_values
 
-    se <- std_err(y_values)
-    cat(min(y_values),"\r\n")
-    if (se < tolerance) {
-      cat(paste0("Solution reached at iter ",k,"\r\n"))
-      return(colMeans(population))
+    y_trace[length(y_trace)+1] <- min(y_values)
+
+    y_to_test <- y_trace[
+      (max(length(y_trace) - stall_generations,1)
+      ):length(y_trace)
+      ]
+    se <- std_err(y_to_test)
+
+    if (!is.na(se) && (se < tolerance)){
+      cat(paste0("Solution reached at iter ",i,"\r\n"))
+      break
     }
 
+    # se <- std_err(y_values)
+    #
+    # #cat(min(y_values),"\r\n")
+    # cat(se,"\r\n")
+    # if (se < tolerance) {
+    #   cat(paste0("Solution reached at iter ",k,"\r\n"))
+    #   return(colMeans(population))
+    # }
+
     next_population <- matrix(ncol = n_params, nrow = population_size,data=NA)
+
+    # fitness is inverse of y, but we need to correct all values <=0
+    fitness <- 1/(y_values - min(y_values) + 0.0001)
 
     # first, keep elite_count best individuals
     next_population[1:elite_count,] <- population[order(fitness, decreasing = TRUE)[1:elite_count],]
@@ -66,5 +85,7 @@ cross_over_fraction = 0.5 # what are the proportions of crossovers vs mutations
     population <- next_population
 
   }
+
+  population[which.min(y_values),]
 
 #}
