@@ -1,62 +1,91 @@
-genetic_algorithm_minimizer <- function(
-  n_params,
-  f, # function to minimize
-  max_iterations = 100,
-  n_genomes = 150,
-  tolerance = 1e-08, # standard error of predicted y before we stop,
-  w = 1, # weighting factor to favor best individuals (1 = exactly proportional),
-  mutation_rate = 0.5, # what is the probability of mutating,
-  mutation_amplitude = 1 # sd of rnorm for mutations
-) {
+rm(list = ls())
 
-  # A random gene pool to begin with
-  pool <- matrix(ncol = n_params, nrow = n_genomes, data = rnorm(n_params*n_genomes))
+source("utils/se.R")
 
-  for (k in 1:max_iterations) {
 
-    y_values <- apply(pool, 1, f)
+source("test_functions/MathewsFink.R")
 
-    ### Fitness must be inverse of y-values in order to minimize
-    fitness <- 1 / y_values
+n_params = 2
+f = mf_f # function to minimize
+max_generations = 100*n_params
+population_size = 50
+tolerance = 1e-08 # standard error of predicted y before we stop,
+w = 2 # weighting factor to favor best individuals (1 = exactly proportional),
 
-    se <- sd(y_values) / sqrt(n_genomes)
+elite_count = 2 # how many "best" individuals do we keep?
+cross_over_fraction = 0.5 # what are the proportions of crossovers vs mutations
+stall_generations = 50
+# genetic_algorithm_minimizer <- function(
+#   n_params,
+#   f, # function to minimize
+#   max_iterations = 100,
+#   population_size = 50,
+#   tolerance = 1e-08, # standard error of predicted y before we stop,
+#   w = 1, # weighting factor to favor best individuals (1 = exactly proportional),
+#   mutation_amplitude = 1 # sd of rnorm for mutations
+# ) {
 
-    cat(min(y_values),"\r\n")
+  population <- matrix(ncol = n_params, nrow = population_size, data = rnorm(n_params*population_size))
 
-    if (se < tolerance) {
-      cat(paste0("Solution reached at iter ",k,"\r\n"))
-      return(colMeans(pool))
+  y_trace <- c()
+
+  for (i in 1:max_generations) {
+    y_values <- apply(population, 1, f)
+
+    y_trace[length(y_trace)+1] <- min(y_values)
+
+    y_to_test <- y_trace[
+      (max(length(y_trace) - stall_generations,1)
+      ):length(y_trace)
+      ]
+    se <- std_err(y_to_test)
+
+    if (!is.na(se) && (se < tolerance)){
+      cat(paste0("Solution reached at iter ",i,"\r\n"))
+      break
     }
 
-    # sort both fitness vector and gene pool
-    pool <- pool[order(fitness, decreasing = TRUE),]
-    fitness <- sort(fitness, decreasing = TRUE)
+    # se <- std_err(y_values)
+    #
+    # #cat(min(y_values),"\r\n")
+    # cat(se,"\r\n")
+    # if (se < tolerance) {
+    #   cat(paste0("Solution reached at iter ",k,"\r\n"))
+    #   return(colMeans(population))
+    # }
 
-    p <- fitness / sum(fitness) # calculate probability of reproducing from relative fitness
-    p <- p^w # adding weight to best individuals
-    (cum_p <- cumsum(p)) # build a cumulative probability vector to compare random numbers against
+    next_population <- matrix(ncol = n_params, nrow = population_size,data=NA)
 
-    # selecting fittest individuals more often
-    pool <- pool[sapply(runif(n = n_genomes), FUN = function(x) {
-      which.min(cum_p <= x)
-    }),]
+    # fitness is inverse of y, but we need to correct all values <=0
+    fitness <- 1/(y_values - min(y_values) + 0.0001)
 
-    # applying some random mutations based on mutation_rate and mutation_amplitude
-    #pool <- matrix(ncol = 2, nrow = 25, data = c(1))
-    pool <- apply(
-      pool,
-      1,
-      function(x) {
-        if(runif(1) < mutation_rate) {
-          x+rnorm(length(x),0,mutation_amplitude)
-        }else{
-          x
-        }
-      }
-    )
+    # first, keep elite_count best individuals
+    next_population[1:elite_count,] <- population[order(fitness, decreasing = TRUE)[1:elite_count],]
+
+    # probability of reproducing is relative fitness (and a possible exponent to penalize bad fitness)
+    p <- (fitness / sum(fitness))^w
+
+    # next step : build crossover individuals (i.e. sexual reproduction)
+    crossover_count <- round((population_size - elite_count)*cross_over_fraction)
+
+    for (j in (elite_count + 1):(elite_count + crossover_count)){
+      parents <- population[sample(1:population_size,2,prob = p),]
+      next_population[j,] <- apply(parents,2,function(x) {
+        x[sample(c(1,2),1)]
+      })
+    }
+
+    # Finally, fill the rest of new pop with mutants
+    mutation_count <- population_size - (elite_count + crossover_count)
+
+    mutants <- population[sample(1:population_size,mutation_count,prob = p),]
+
+    next_population[(j+1):population_size,] <- mutants + rnorm(length(mutants))
+
+    population <- next_population
 
   }
 
-  warning(paste("Algorithm did not converge in", k, "iterations\r\n"))
+  population[which.min(y_values),]
 
-}
+#}
