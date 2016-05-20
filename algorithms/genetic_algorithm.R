@@ -1,5 +1,3 @@
-source("utils/se.R")
-
 genetic_algorithm_minimizer <- function(
   n_params = 2,
   f, # function to minimize

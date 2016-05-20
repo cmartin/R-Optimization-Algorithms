@@ -1,7 +1,3 @@
-rm(list = ls())
-
-source("utils/se.R")
-
 simulated_annealing_minimizer <- function(
   n_params = 1,
   f,
