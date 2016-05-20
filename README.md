@@ -24,4 +24,4 @@ The MATLAB help pages have some clear introductions to the algorithms, e.g.
 
 especially the "Concepts" sections were very helpful.
 
-And for the Nelder-Mead, reading the 2d (i.e. 2 parameters) examples was very helpful to visualize what was going on (e.g. [http://www.scholarpedia.org/article/Nelder-Mead_algorithm])
+And for the Nelder-Mead, reading the 2d (i.e. 2 parameters) examples was very helpful to visualize what was going on (e.g. http://www.scholarpedia.org/article/Nelder-Mead_algorithm)
