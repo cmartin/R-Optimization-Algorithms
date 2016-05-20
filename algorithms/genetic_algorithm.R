@@ -1,29 +1,16 @@
-rm(list = ls())
-
 source("utils/se.R")
 
-
-source("test_functions/MathewsFink.R")
-
-n_params = 2
-f = mf_f # function to minimize
-max_generations = 100*n_params
-population_size = 50
-tolerance = 1e-08 # standard error of predicted y before we stop,
-w = 2 # weighting factor to favor best individuals (1 = exactly proportional),
-
-elite_count = 2 # how many "best" individuals do we keep?
-cross_over_fraction = 0.5 # what are the proportions of crossovers vs mutations
-stall_generations = 50
-# genetic_algorithm_minimizer <- function(
-#   n_params,
-#   f, # function to minimize
-#   max_iterations = 100,
-#   population_size = 50,
-#   tolerance = 1e-08, # standard error of predicted y before we stop,
-#   w = 1, # weighting factor to favor best individuals (1 = exactly proportional),
-#   mutation_amplitude = 1 # sd of rnorm for mutations
-# ) {
+genetic_algorithm_minimizer <- function(
+  n_params = 2,
+  f, # function to minimize
+  max_generations = 100*n_params,
+  population_size = 50,
+  tolerance = 1e-06, # standard error of predicted y before we stop,
+  w = 2, # weighting factor to favor best individuals (1 = exactly proportional),
+  elite_count = 2, # how many "best" individuals do we keep?
+  cross_over_fraction = 0.5, # what are the proportions of crossovers vs mutations
+  stall_generations = 50
+) {
 
   population <- matrix(ncol = n_params, nrow = population_size, data = rnorm(n_params*population_size))
 
@@ -44,15 +31,6 @@ stall_generations = 50
       cat(paste0("Solution reached at iter ",i,"\r\n"))
       break
     }
-
-    # se <- std_err(y_values)
-    #
-    # #cat(min(y_values),"\r\n")
-    # cat(se,"\r\n")
-    # if (se < tolerance) {
-    #   cat(paste0("Solution reached at iter ",k,"\r\n"))
-    #   return(colMeans(population))
-    # }
 
     next_population <- matrix(ncol = n_params, nrow = population_size,data=NA)
 
@@ -88,4 +66,4 @@ stall_generations = 50
 
   population[which.min(y_values),]
 
-#}
+}
