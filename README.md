@@ -12,7 +12,11 @@ The following algorithms are implemented :
 * [genetic algorithm](algorithms/genetic_algorithm.R) (rewritten from scratch, now using elite parents that automatically survive and crossovers)
 * [nelder-mead algorithm](algorithms/nelder_mead.R) (not seen during the week, but very cool to learn and very performant)
 
+# Caveats
+
 As of now, the genetic algorithm cannot run the log-likelihood linear model because there is no way to constrain the value of some parameters to a specific range
+
+Also, the genetic algorithm sometimes stop as if it found a solution at iteration 2, IT'S NOT. You need to run it again.
 
 PS these functions were built mostly for readability, and thus are not optimized or coded for restarts etc.
 Serious work should probably be done with R's more robust functions (e.g. optim etc.)
