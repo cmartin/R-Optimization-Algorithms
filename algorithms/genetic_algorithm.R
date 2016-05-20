@@ -5,7 +5,7 @@ genetic_algorithm_minimizer <- function(
   f, # function to minimize
   max_generations = 100*n_params,
   population_size = 50,
-  tolerance = 1e-06, # standard error of predicted y before we stop,
+  tolerance = .01, # variance of best y_values over time
   w = 2, # weighting factor to favor best individuals (1 = exactly proportional),
   elite_count = 2, # how many "best" individuals do we keep?
   cross_over_fraction = 0.5, # what are the proportions of crossovers vs mutations
@@ -21,13 +21,14 @@ genetic_algorithm_minimizer <- function(
 
     y_trace[length(y_trace)+1] <- min(y_values)
 
+    #Calculate stopping condition only on max_stall_iterations values
     y_to_test <- y_trace[
       (max(length(y_trace) - stall_generations,1)
       ):length(y_trace)
-      ]
-    se <- std_err(y_to_test)
+    ]
 
-    if (!is.na(se) && (se < tolerance)){
+    v <- var(y_to_test)
+    if (!is.na(v) && (v < tolerance)){
       cat(paste0("Solution reached at iter ",i,"\r\n"))
       break
     }

@@ -8,7 +8,7 @@ simulated_annealing_minimizer <- function(
   max_iterations = 100000,
   start_temp = 100,
   verbose = FALSE,
-  tolerance = 1e-6, # standard error of y_value over the last max_stall_iterations
+  tolerance = .01, # variance of last max_stall_iterations before we stop
   max_stall_iterations = 500 * n_params,
   temperature_curve = 0.95, # 1 = linear
   max_search_distance = 0.5
@@ -52,14 +52,14 @@ simulated_annealing_minimizer <- function(
 
     y_trace[length(y_trace) + 1] <- current_y
 
-    # Calculate stopping condition only on max_stall_iterations values
+    #Calculate stopping condition only on max_stall_iterations values
     y_to_test <- y_trace[
       (max(length(y_trace) - max_stall_iterations,1)
       ):length(y_trace)
     ]
-    se <- std_err(y_to_test)
 
-    if (!is.na(se) && (se < tolerance)){
+    v <- var(y_to_test)
+    if (!is.na(v) && (v < tolerance)){
       cat(paste0("Solution reached at iter ",i,"\r\n"))
       break
     }

@@ -3,7 +3,7 @@ source("algorithms/genetic_algorithm.R")
 
 
 source("test_functions/MathewsFink.R")
-(sol <- genetic_algorithm_minimizer(2,mf_f))
+(sol <- genetic_algorithm_minimizer(2,mf_f, max_generations = 1000))
 
 source("test_functions/Rosenbrock.R")
 # Transform y function for GA algorithm
