@@ -16,3 +16,12 @@ As of now, the genetic algorithm cannot run the log-likelihood linear model beca
 
 PS these functions were built mostly for readability, and thus are not optimized or coded for restarts etc.
 Serious work should probably be done with R's more robust functions (e.g. optim etc.)
+
+# References
+The MATLAB help pages have some clear introductions to the algorithms, e.g. 
+* http://www.mathworks.com/help/gads/genetic-algorithm.html, 
+* http://www.mathworks.com/help/gads/simulated-annealing.html, 
+
+especially the "Concepts" sections were very helpful.
+
+And for the Nelder-Mead, reading the 2d (i.e. 2 parameters) examples was very helpful to visualize what was going on (e.g. [http://www.scholarpedia.org/article/Nelder-Mead_algorithm])
