@@ -1,7 +1,8 @@
 # http://stackoverflow.com/a/11081290/373222
 # https://en.wikipedia.org/wiki/Numerical_differentiation
-approximate_derivative <- function(x,f, h = 1e-10) {
-  (f(x+h) - f(x)) / h
+approximate_derivative <- function(x, f, h = 1e-10) {
+  #(f(x+h) - f(x)) / h
+  (f(x+h) - f(x-h)) / (2*h)
 }
 
 # https://en.wikipedia.org/wiki/Gradient_descent
