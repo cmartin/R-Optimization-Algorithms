@@ -16,8 +16,8 @@ gradient_descent <- function(
   n_params = 1,
   f,
   precision = 0.0001,
-  max_iterations = 1000,
-  step_size = 0.01,
+  max_iterations = 20000,
+  step_size = 0.0001, # learning rate
   verbose = FALSE
 ){
 
@@ -46,7 +46,7 @@ gradient_descent <- function(
 
 
 source("test_functions/LinearModel.R")
-(sol <- gradient_descent(2,lm_ss))
+(sol <- gradient_descent(2,lm_ss, step_size = 0.0001))
 # n_params = 2
 # precision = 0.00001
 # max_iterations = 100000
