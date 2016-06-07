@@ -1,8 +1,13 @@
-# http://stackoverflow.com/a/11081290/373222
 # https://en.wikipedia.org/wiki/Numerical_differentiation
 approximate_derivative <- function(x, f, h = 1e-10) {
-  #(f(x+h) - f(x)) / h
-  (f(x+h) - f(x-h)) / (2*h)
+  d <- c()
+  for (i in 1:length(x)) {
+    left <- right <- x
+    left[i] <- left[i] + h
+    right[i] <- right[i] - h
+    d[i] <- (f(left) - f(right)) / (2*h)
+  }
+  d
 }
 
 # https://en.wikipedia.org/wiki/Gradient_descent
@@ -19,9 +24,9 @@ gradient_descent <- function(
 
   for (i in 1:max_iterations) {
     x_old <- x_new
-    x_new = x_old - step_size * approximate_derivative(x_old,f)
+    (x_new = x_old - step_size * approximate_derivative(x_old,f))
 
-    if (abs((x_new - x_old)) <= precision) {
+    if (abs(f(x_new) - f(x_old)) <= precision) {
       cat(paste0("Solution reached at iter ",i,"\r\n"))
       break;
     }
@@ -40,12 +45,12 @@ gradient_descent <- function(
 
 
 #source("test_functions/LinearModel.R")
-#(sol <- gradient_descent(2,lm_ss))
-# n_params = 2
-# precision = 0.00001
-# max_iterations = 100000
-# step_size = 0.01
-#f = lm_ss
+(sol <- gradient_descent(2,lm_ss))
+n_params = 2
+precision = 0.00001
+max_iterations = 100000
+step_size = 0.01
+f = lm_ss
 
 f <- function(x){4*x^2-4*x}
 x <- -100:100
